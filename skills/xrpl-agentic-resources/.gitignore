@@ -1,6 +1,7 @@
 # Vendored repos are cloned on demand by scripts/refresh.sh, never committed.
 ows/
 rlusd-skills/
+rlusd-cli/
 x402-secure/
 xrpl-dev-portal/
 XRPL-Standards/

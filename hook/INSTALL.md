@@ -80,7 +80,13 @@ Create or merge into `.claude/settings.json` at the PROJECT root (not `~/.claude
 }
 ```
 
-`$CLAUDE_PROJECT_DIR` resolves to this project, so the path stays portable. Run `/hooks` to confirm it loaded.
+`$CLAUDE_PROJECT_DIR` resolves to the project root. This works when this repo IS the project root. If instead you vendored this repo as a subfolder of a larger project (a team monorepo), `$CLAUDE_PROJECT_DIR` resolves to the OUTER root, the `hook/...` path does not exist there, and the Stop hook dies with exit 127 without ever firing. In that case, prefix the `hook/` segment with the repo path relative to the project root, or (simplest and always correct) generate the snippet with the absolute resolved path already filled in:
+
+```bash
+node hook/setup.mjs --emit-hooks
+```
+
+That prints ready-to-paste Claude, Cursor, and Codex registrations pointing at the absolute path of each `stop-hook.mjs`, so it stays correct wherever the repo lives. Run `/hooks` to confirm it loaded.
 
 ### Cursor
 

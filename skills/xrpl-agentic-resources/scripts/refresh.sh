@@ -5,6 +5,11 @@
 #      (these sites expose no sitemap.xml or llms.txt, so we scrape rendered links)
 #   3. refresh the xrpl.org llms.txt snapshot
 # Safe to run every invocation. Idempotent.
+#
+# Windows: do NOT run this with a bare `bash refresh.sh`, which can select the
+# WSL launcher and fail with E_ACCESSDENIED. Use Git for Windows bash explicitly
+# ("C:\Program Files\Git\bin\bash.exe" refresh.sh) or the PowerShell wrapper:
+#   powershell -ExecutionPolicy Bypass -File scripts/refresh.ps1
 set -u
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:${PATH:-}
 
@@ -22,6 +27,9 @@ refresh_repo () {  # $1 = subdir, $2 = remote
 }
 refresh_repo ows          https://github.com/open-wallet-standard/core.git
 refresh_repo rlusd-skills https://github.com/t54-labs/rlusd-skills
+# rlusd-cli is a sibling that several rlusd-skills node tests open at
+# ../rlusd-cli/README.md; without it, repo-level `node --test` fails with ENOENT.
+refresh_repo rlusd-cli    https://github.com/t54-labs/rlusd-cli
 refresh_repo x402-secure  https://github.com/t54-labs/x402-secure
 
 if [ -d "$S/xrpl-dev-portal/.git" ]; then

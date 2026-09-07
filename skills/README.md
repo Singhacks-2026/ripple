@@ -20,9 +20,24 @@ From the repo root:
 bash skills/install.sh
 ```
 
-That symlinks every skill here into `.claude/skills/`, `.cursor/skills/`, and
+That links every skill here into `.claude/skills/`, `.cursor/skills/`, and
 `.codex/skills/` (project scoped, inside this repo). Cursor also reads
 `.claude/skills` and `.codex/skills`, so it is covered too.
+
+### Windows
+
+Symlinks committed in git check out as tiny text stubs on a default Windows
+clone, so the skill silently never loads. Use the PowerShell installer, which
+copies the skill folders instead of symlinking:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File skills\install.ps1
+```
+
+`install.sh` also works from Git Bash and automatically falls back to copying
+(and repairs any broken stubs) when it detects Windows or when `ln -s` fails.
+To keep real symlinks instead, run `git config --global core.symlinks true`
+before cloning (requires Windows Developer Mode or an elevated shell).
 
 Then invoke it in your agent by typing `/xrpl-agentic-resources`, or just start
 XRPL agent work and the agent will load it by description. On first use, run its
@@ -30,6 +45,14 @@ refresh once to pull the vendored repos and fresh docs indexes:
 
 ```bash
 bash skills/xrpl-agentic-resources/scripts/refresh.sh
+```
+
+On Windows, do not use a bare `bash` (it can select WSL and fail with
+`E_ACCESSDENIED`). Use the PowerShell wrapper, which finds Git for Windows
+bash.exe explicitly:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File skills\xrpl-agentic-resources\scripts\refresh.ps1
 ```
 
 ## Manual install (per agent)
@@ -50,7 +73,9 @@ ln -s ../../skills/xrpl-agentic-resources .claude/skills/xrpl-agentic-resources
 
 ## Notes
 
-- The vendored repos (`ows`, `rlusd-skills`, `x402-secure`, `xrpl-dev-portal`,
-  `XRPL-Standards`) are cloned on demand by `refresh.sh` and are gitignored, so
-  the repo stays small. The committed `resources/` snapshots work offline.
+- The vendored repos (`ows`, `rlusd-skills`, `rlusd-cli`, `x402-secure`,
+  `xrpl-dev-portal`, `XRPL-Standards`) are cloned on demand by `refresh.sh` and
+  are gitignored, so the repo stays small. `rlusd-cli` is fetched because several
+  `rlusd-skills` node tests open `../rlusd-cli/README.md` and fail with ENOENT
+  without it. The committed `resources/` snapshots work offline.
 - `refresh.sh` needs `git`, `curl`, and network access.
